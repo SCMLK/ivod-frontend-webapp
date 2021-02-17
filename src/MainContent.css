@@ -1,0 +1,7 @@
+#selectPopular, #selectCharts, #selectFilter {
+	width: 280px;
+}
+
+div .MuiGrid-root {
+	color: white;
+}

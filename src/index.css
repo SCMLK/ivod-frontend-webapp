@@ -1,0 +1,92 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: #335d94ff !Important;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+
+.MuiAppBar-colorPrimary {
+    color: #fff;
+    background-color: #335d94ff !Important;
+}
+
+.MuiDrawer-paper {
+	background-color: #0f3f7bff !Important;
+	color: white;
+}
+
+.MuiTypography-root { 
+	color: white;
+}
+
+.MuiListItemIcon-root {
+	color: white !Important;
+}
+
+.MuiIconButton-root {
+	color: white !Important;
+}
+
+.SearchBar {
+	position: absolute;
+	left: 50%;
+	bottom: 8px;
+	width: 120px%;
+}
+
+#HeaderLoginBtn {
+	position: absolute;
+	right: 20px;
+	bottom: 14px;
+	width: 150px;
+}
+
+.HeaderNotification {
+	position: absolute;
+	right: 180px;
+	bottom: 18px;
+}
+
+.banner {
+	position: relative;
+	float: left;
+	width: 100% !important;
+	height: 280px;
+	margin-top: 60px;
+}
+
+main {
+	position: relative;
+	float: clear;
+	margin-left: 80px;
+	margin-top: 300px;
+}
+
+.footer{
+  margin-top: 1rem;
+  padding: 8px;
+  background-color: black;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 60px;
+}
+
+.ifisLogo {
+	float: right;
+	margin-right: 14px;
+}
+/* dunkelstes blau -> hellstes blau: */
+/* #0f3f7bff */
+/*  */
+/*  */
+/*  */
