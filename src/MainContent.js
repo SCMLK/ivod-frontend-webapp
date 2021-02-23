@@ -20,18 +20,33 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MainContent() {
 	const classes = useStyles();
-    const [age, setAge] = React.useState('');
-    const [open, setOpen] = React.useState(false);
+    //TODO: Hardcoded values are an ugly fix, create state-object from a config?
+    //selectStates[0] <=> open state
+    //selectStates[1] <=> open setter
+    //selectStates[2] <=> value state
+    //selectStates[3] <=> value setter
+    const selectStates = {
+        'demo-controlled-time-open-select': React.useState(false).concat(React.useState('')),
+        'demo-controlled-charttype-open-select': React.useState(false).concat(React.useState('')),
+        'demo-controlled-filter-open-select': React.useState(false).concat(React.useState('')),
+    }
+    const [currentlyOpen, setCurrentlyOpen] = React.useState(undefined);
 
 	const handleChange = (event) => {
+      const setAge = selectStates[currentlyOpen][3];
 	  setAge(event.target.value);
 	};
 
-	const handleClose = () => {
+	const handleClose = (event) => {
+      const setOpen = selectStates[currentlyOpen][1];
 	  setOpen(false);
+      setCurrentlyOpen(undefined)
 	};
 
-	const handleOpen = () => {
+	const handleOpen = (event) => {
+      setCurrentlyOpen(event.target.id);
+      //Set all other managed selects to closed?
+      const setOpen = selectStates[event.target.id][1];
 	  setOpen(true);
 	};
 
@@ -39,14 +54,14 @@ export default function MainContent() {
             <Grid container spacing={3}>
               <Grid item xs>
                 <FormControl className={classes.formControl} id="selectPopular">
-			        <InputLabel id="demo-controlled-open-select-label">Charts der letzten 30 Tagen</InputLabel>
+			        <InputLabel id="demo-controlled-time-open-select-label">Charts der letzten 30 Tagen</InputLabel>
 			        <Select
-			          labelId="demo-controlled-open-select-label"
-			          id="demo-controlled-open-select"
-			          open={open}
+			          labelId="demo-controlled-time-open-select-label"
+			          id="demo-controlled-time-open-select"
+			          open={selectStates['demo-controlled-time-open-select'][0]}
 			          onClose={handleClose}
 			          onOpen={handleOpen}
-			          value={age}
+			          value={selectStates['demo-controlled-time-open-select'][2]}
 			          onChange={handleChange}
 			        >
 			          <MenuItem value="">
@@ -62,14 +77,14 @@ export default function MainContent() {
               </Grid>
               <Grid item xs>
                 <FormControl className={classes.formControl} id="selectCharts">
-			        <InputLabel id="demo-controlled-open-select-label">alle Charts</InputLabel>
+			        <InputLabel id="demo-controlled-charttype-open-select-label">alle Charts</InputLabel>
 			        <Select
-			          labelId="demo-controlled-open-select-label"
-			          id="demo-controlled-open-select"
-			          open={open}
+			          labelId="demo-controlled-charttype-open-select-label"
+			          id="demo-controlled-charttype-open-select"
+			          open={selectStates['demo-controlled-charttype-open-select'][0]}
 			          onClose={handleClose}
 			          onOpen={handleOpen}
-			          value={age}
+			          value={selectStates['demo-controlled-charttype-open-select'][2]}
 			          onChange={handleChange}
 			        >
 			          <MenuItem value="">
@@ -87,14 +102,14 @@ export default function MainContent() {
               </Grid>
               <Grid item xs>
                 <FormControl className={classes.formControl} id="selectFilter">
-			        <InputLabel id="demo-controlled-open-select-label">Filter nach</InputLabel>
+			        <InputLabel id="demo-controlled-filter-open-select-label">Filter nach</InputLabel>
 			        <Select
-			          labelId="demo-controlled-open-select-label"
-			          id="demo-controlled-open-select"
-			          open={open}
+			          labelId="demo-controlled-filter-open-select-label"
+			          id="demo-controlled-filter-open-select"
+			          open={selectStates['demo-controlled-filter-open-select'][0]}
 			          onClose={handleClose}
 			          onOpen={handleOpen}
-			          value={age}
+			          value={selectStates['demo-controlled-filter-open-select'][2]}
 			          onChange={handleChange}
 			        >
 			          <MenuItem value="">
