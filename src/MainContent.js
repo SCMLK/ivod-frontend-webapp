@@ -6,6 +6,10 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import './MainContent.css';
+import ChartPreview from './ChartPreview'
+
+import PFPPlaceholder from './images/pfp_placeholder.png'
+import PreviewPlaceholder from './images/preview_placeholder.png'
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -49,6 +53,10 @@ export default function MainContent() {
       const setOpen = selectStates[event.target.id][1];
 	  setOpen(true);
 	};
+
+    React.useEffect( () => {
+        console.log("State changed")
+    })
 
 	return  (<div classs="mainContent">
             <Grid container spacing={3}>
@@ -122,6 +130,11 @@ export default function MainContent() {
 			        </Select>
 			    </FormControl>
               </Grid>
+            </Grid>
+            <Grid container spacing={3}>
+                <ChartPreview pfp={PFPPlaceholder} preview={PreviewPlaceholder} chartDescription="REALLY LONG PLACEHOLDER TO TEST WRAPPING. SERIOUSLY THIS TEXT IS REALLY REALLY LONG. AT THIS POINT IT SHOULD HAVE WRAPPED"/>
+                <ChartPreview pfp={PFPPlaceholder} preview={PreviewPlaceholder} chartDescription="PLACEHOLDER"/>
+                <ChartPreview pfp={PFPPlaceholder} preview={PreviewPlaceholder} chartDescription="PLACEHOLDER"/>
             </Grid>
           </div>);
 }

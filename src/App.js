@@ -51,6 +51,9 @@ const drawerWidth = 240;
 const useStyles = makeStyles((theme) => ({
   root: {
     display: 'flex',
+    'min-height': '100vh',
+    position: 'relative',
+    'padding-bottom': '60px',
   },
   appBar: {
     zIndex: theme.zIndex.drawer + 1,
@@ -250,9 +253,9 @@ export default function MiniDrawer() {
           <MainContent />
         </main>
       </div>
-      <div className="footer">
-       <img class="ifisLogo" src={IfisLogo} alt="Ifis-Logo" />
-      </div>
+      <footer>
+        <img class="ifisLogo" src={IfisLogo} alt="Ifis-Logo" />
+      </footer>
     </div>
   );
 }
