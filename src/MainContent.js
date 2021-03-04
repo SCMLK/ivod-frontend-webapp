@@ -11,6 +11,9 @@ import ChartPreview from './ChartPreview'
 import PFPPlaceholder from './images/pfp_placeholder.png'
 import PreviewPlaceholder from './images/preview_placeholder.png'
 
+import axios from 'axios';
+
+
 const useStyles = makeStyles((theme) => ({
   button: {
     display: 'block',
@@ -36,9 +39,12 @@ export default function MainContent() {
     }
     const [currentlyOpen, setCurrentlyOpen] = React.useState(undefined);
 
+    const [chartList, setChartList] = React.useState([])
+
 	const handleChange = (event) => {
       const setAge = selectStates[currentlyOpen][3];
 	  setAge(event.target.value);
+      updatePreviews();
 	};
 
 	const handleClose = (event) => {
@@ -54,9 +60,21 @@ export default function MainContent() {
 	  setOpen(true);
 	};
 
+    const updatePreviews = () => {
+        axios.get(`https://visquid.org/api/charts`)
+          .then(res => {
+            setChartList(res.data);
+          });
+    }
+
     React.useEffect( () => {
-        console.log("State changed")
+        console.log("State changed");
     })
+
+    React.useEffect(() => {
+        //Run only once on mount
+        updatePreviews();
+    }, []);
 
 	return  (<div classs="mainContent">
             <Grid container spacing={3}>
@@ -132,9 +150,12 @@ export default function MainContent() {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-                <ChartPreview pfp={PFPPlaceholder} preview={PreviewPlaceholder} chartDescription="REALLY LONG PLACEHOLDER TO TEST WRAPPING. SERIOUSLY THIS TEXT IS REALLY REALLY LONG. AT THIS POINT IT SHOULD HAVE WRAPPED"/>
-                <ChartPreview pfp={PFPPlaceholder} preview={PreviewPlaceholder} chartDescription="PLACEHOLDER"/>
-                <ChartPreview pfp={PFPPlaceholder} preview={PreviewPlaceholder} chartDescription="PLACEHOLDER"/>
+                { chartList.map( (object, index) => 
+                    {
+                        //FIXME: Simply pass the object and index to ChartPreview and let it handle the rest itself
+                        return <ChartPreview pfp={PFPPlaceholder} preview={PreviewPlaceholder} chartDescription={object.chart_name} />
+                    })
+                }
             </Grid>
           </div>);
 }
