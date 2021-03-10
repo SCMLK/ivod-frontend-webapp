@@ -12,6 +12,7 @@ import PFPPlaceholder from './images/pfp_placeholder.png'
 import PreviewPlaceholder from './images/preview_placeholder.png'
 
 import axios from 'axios';
+import deepEqual from 'deep-equal'
 
 
 const useStyles = makeStyles((theme) => ({
@@ -61,19 +62,57 @@ export default function MainContent() {
 	};
 
     const updatePreviews = () => {
-        axios.get(`https://visquid.org/api/charts`)
+        //TODO: Avoid unnecessary calls when UI-Element state changes
+        const param = {}
+        if(selectStates['demo-controlled-time-open-select'][2] === 10) {
+            let date = new Date();
+            date.setDate(date.getDate() - 7);
+            param['creation_time__gte'] = date.toISOString()
+        }
+        if(selectStates['demo-controlled-time-open-select'][2] === 20) {
+            let date = new Date();
+            date.setDate(date.getDate() - 30);
+            param['creation_time__gte'] = date.toISOString()
+        }
+        switch (selectStates['demo-controlled-charttype-open-select'][2]) {
+            case 20:
+                param['chart_type'] = 'piechart';
+                break;
+            case 30:
+                param['chart_type'] = 'linechart';
+                break;
+            case 40:
+                param['chart_type'] = 'chordchart';
+                break;
+            case 50:
+                param['chart_type'] = 'bubblechart';
+                break;
+            case 60:
+                param['chart_type'] = 'scatterchart';
+                break;
+            case 70:
+                param['chart_type'] = 'hiveplot';
+                break;
+        }
+        axios.get(`https://visquid.org/api/charts`, {params: param})
           .then(res => {
-            setChartList(res.data);
+            if(!(deepEqual(res.data, chartList))) {
+                
+                //Only run if local data differed from most recent server response
+                setChartList(res.data);
+
+            }
           });
     }
 
     React.useEffect( () => {
         console.log("State changed");
+        updatePreviews();
     })
 
     React.useEffect(() => {
         //Run only once on mount
-        updatePreviews();
+        
     }, []);
 
 	return  (<div classs="mainContent">
@@ -113,9 +152,9 @@ export default function MainContent() {
 			          value={selectStates['demo-controlled-charttype-open-select'][2]}
 			          onChange={handleChange}
 			        >
-			          <MenuItem value="">
+{/*			          <MenuItem value="">
 			            <em>None</em>
-			          </MenuItem>
+			          </MenuItem>*/}
 			          <MenuItem value={10}>alle Charts</MenuItem>
 			          <MenuItem value={20}>Piecharts</MenuItem>
 			          <MenuItem value={30}>Linecharts</MenuItem>
