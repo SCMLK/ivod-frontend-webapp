@@ -27,82 +27,124 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 export default function MainContent() {
-	const classes = useStyles();
-    //TODO: Hardcoded values are an ugly fix, create state-object from a config?
-    //selectStates[0] <=> open state
-    //selectStates[1] <=> open setter
-    //selectStates[2] <=> value state
-    //selectStates[3] <=> value setter
-    const selectStates = {
-        'demo-controlled-time-open-select': React.useState(false).concat(React.useState('')),
-        'demo-controlled-charttype-open-select': React.useState(false).concat(React.useState('')),
-        'demo-controlled-filter-open-select': React.useState(false).concat(React.useState('')),
-    }
-    const [currentlyOpen, setCurrentlyOpen] = React.useState(undefined);
 
-    const [chartList, setChartList] = React.useState([])
+    const [committedState, setstate] =  React.useState({
+        dropdown : {
+            'demo-controlled-time-open-select': {
+                open: false,
+                value: "",
+            },
+            'demo-controlled-charttype-open-select': {
+                open: false,
+                value: 10,
+            }
+            ,
+            'demo-controlled-filter-open-select': {
+                open: false,
+                value: 10,
+            }
+        },
+        charts: [],
+        previous: {},
+    });
+    const uncommittedState = JSON.parse(JSON.stringify(committedState));
+    const commitState = () => {
+        setstate(uncommittedState);
+    };
+
+    const getOpen = () => {
+        //Return the first open dropdown list, or null, if no lists are open
+        for (let [name, list] of Object.entries(uncommittedState.dropdown)) {
+            if (list.open) {
+                return list;
+            }
+        }
+        return null;
+    }
+
+    const valuesChanged = () => {
+        for (let [name, list] of Object.entries(uncommittedState.dropdown)) {
+            if ( !(
+                uncommittedState.previous &&
+                uncommittedState.previous.dropdown &&
+                uncommittedState.previous.dropdown[name] &&
+                uncommittedState.previous.dropdown[name].value === list.value)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+	const classes = useStyles();
 
 	const handleChange = (event) => {
-      const setAge = selectStates[currentlyOpen][3];
-	  setAge(event.target.value);
-      updatePreviews();
+      let list = getOpen();
+	  list.value = event.target.value;
+	  list.open = false;
+	  commitState()
 	};
 
 	const handleClose = (event) => {
-      const setOpen = selectStates[currentlyOpen][1];
-	  setOpen(false);
-      setCurrentlyOpen(undefined)
+        // let list = getOpen();
+        // list.open = false;
+        // commitState()
 	};
 
 	const handleOpen = (event) => {
-      setCurrentlyOpen(event.target.id);
-      //Set all other managed selects to closed?
-      const setOpen = selectStates[event.target.id][1];
-	  setOpen(true);
+	  uncommittedState.dropdown[event.target.id]['open'] = true;
+	  commitState()
 	};
 
     const updatePreviews = () => {
-        //TODO: Avoid unnecessary calls when UI-Element state changes
-        const param = {}
-        if(selectStates['demo-controlled-time-open-select'][2] === 10) {
-            let date = new Date();
-            date.setDate(date.getDate() - 7);
-            param['creation_time__gte'] = date.toISOString()
-        }
-        if(selectStates['demo-controlled-time-open-select'][2] === 20) {
-            let date = new Date();
-            date.setDate(date.getDate() - 30);
-            param['creation_time__gte'] = date.toISOString()
-        }
-        switch (selectStates['demo-controlled-charttype-open-select'][2]) {
-            case 20:
-                param['chart_type'] = 'piechart';
-                break;
-            case 30:
-                param['chart_type'] = 'linechart';
-                break;
-            case 40:
-                param['chart_type'] = 'chordchart';
-                break;
-            case 50:
-                param['chart_type'] = 'bubblechart';
-                break;
-            case 60:
-                param['chart_type'] = 'scatterchart';
-                break;
-            case 70:
-                param['chart_type'] = 'hiveplot';
-                break;
-        }
-        axios.get(`https://visquid.org/api/charts`, {params: param})
-          .then(res => {
-            if(!(deepEqual(res.data, chartList))) {
-                
-                //Only run if local data differed from most recent server response
-                setChartList(res.data);
+        if (valuesChanged()) {
+            // Update the reference value, so valuesChanged returns false next time
+            const cloned_state = JSON.parse(JSON.stringify(uncommittedState));
+            delete cloned_state.previous;
+            uncommittedState.previous = cloned_state;
 
+            const param = {}
+            if (uncommittedState.dropdown['demo-controlled-time-open-select']['value'] === 10) {
+                let date = new Date();
+                date.setDate(date.getDate() - 7);
+                param['creation_time__gte'] = date.toISOString()
             }
-          });
+            if (uncommittedState.dropdown['demo-controlled-time-open-select']['value'] === 20) {
+                let date = new Date();
+                date.setDate(date.getDate() - 30);
+                param['creation_time__gte'] = date.toISOString()
+            }
+            switch (uncommittedState.dropdown['demo-controlled-charttype-open-select']['value']) {
+                case 20:
+                    param['chart_type'] = 'piechart';
+                    break;
+                case 30:
+                    param['chart_type'] = 'linechart';
+                    break;
+                case 40:
+                    param['chart_type'] = 'chordchart';
+                    break;
+                case 50:
+                    param['chart_type'] = 'bubblechart';
+                    break;
+                case 60:
+                    param['chart_type'] = 'scatterchart';
+                    break;
+                case 70:
+                    param['chart_type'] = 'hiveplot';
+                    break;
+            }
+            axios.get(`https://visquid.org/api/charts`, {params: param})
+                .then(res => {
+                    console.log("Checked for charts")
+                    if (!(deepEqual(res.data, uncommittedState.charts))) {
+
+                        //Only run if local data differed from most recent server response
+                        uncommittedState.charts = res.data;
+                        console.log("Found changes in charts, updating!")
+                        commitState();
+                    }
+                });
+        }
     }
 
     React.useEffect( () => {
@@ -123,10 +165,10 @@ export default function MainContent() {
 			        <Select
 			          labelId="demo-controlled-time-open-select-label"
 			          id="demo-controlled-time-open-select"
-			          open={selectStates['demo-controlled-time-open-select'][0]}
+			          open={uncommittedState.dropdown['demo-controlled-time-open-select']['open']}
 			          onClose={handleClose}
 			          onOpen={handleOpen}
-			          value={selectStates['demo-controlled-time-open-select'][2]}
+			          value={uncommittedState.dropdown['demo-controlled-time-open-select']['value']}
 			          onChange={handleChange}
 			        >
 			          <MenuItem value="">
@@ -146,15 +188,12 @@ export default function MainContent() {
 			        <Select
 			          labelId="demo-controlled-charttype-open-select-label"
 			          id="demo-controlled-charttype-open-select"
-			          open={selectStates['demo-controlled-charttype-open-select'][0]}
+			          open={uncommittedState.dropdown['demo-controlled-charttype-open-select']['open']}
 			          onClose={handleClose}
 			          onOpen={handleOpen}
-			          value={selectStates['demo-controlled-charttype-open-select'][2]}
+			          value={uncommittedState.dropdown['demo-controlled-charttype-open-select']['value']}
 			          onChange={handleChange}
 			        >
-{/*			          <MenuItem value="">
-			            <em>None</em>
-			          </MenuItem>*/}
 			          <MenuItem value={10}>alle Charts</MenuItem>
 			          <MenuItem value={20}>Piecharts</MenuItem>
 			          <MenuItem value={30}>Linecharts</MenuItem>
@@ -171,10 +210,10 @@ export default function MainContent() {
 			        <Select
 			          labelId="demo-controlled-filter-open-select-label"
 			          id="demo-controlled-filter-open-select"
-			          open={selectStates['demo-controlled-filter-open-select'][0]}
+			          open={uncommittedState.dropdown['demo-controlled-filter-open-select']['open']}
 			          onClose={handleClose}
 			          onOpen={handleOpen}
-			          value={selectStates['demo-controlled-filter-open-select'][2]}
+			          value={uncommittedState.dropdown['demo-controlled-filter-open-select']['value']}
 			          onChange={handleChange}
 			        >
 			          <MenuItem value="">
@@ -189,7 +228,7 @@ export default function MainContent() {
               </Grid>
             </Grid>
             <Grid container spacing={3}>
-                { chartList.map( (object, index) => 
+                { uncommittedState.charts.map( (object, index) =>
                     {
                         //FIXME: Simply pass the object and index to ChartPreview and let it handle the rest itself
                         return <ChartPreview pfp={PFPPlaceholder} preview={PreviewPlaceholder} chartDescription={object.chart_name} />
