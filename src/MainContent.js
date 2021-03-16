@@ -44,6 +44,7 @@ export default function MainContent() {
                 value: 10,
             }
         },
+        last_opened: "",
         charts: [],
         previous: {},
     });
@@ -52,15 +53,15 @@ export default function MainContent() {
         setstate(uncommittedState);
     };
 
-    const getOpen = () => {
-        //Return the first open dropdown list, or null, if no lists are open
-        for (let [name, list] of Object.entries(uncommittedState.dropdown)) {
-            if (list.open) {
-                return list;
-            }
-        }
-        return null;
-    }
+    // const getOpen = () => {
+    //     //Return the first open dropdown list, or null, if no lists are open
+    //     for (let [name, list] of Object.entries(uncommittedState.dropdown)) {
+    //         if (list.open) {
+    //             return list;
+    //         }
+    //     }
+    //     return null;
+    // }
 
     const valuesChanged = () => {
         for (let [name, list] of Object.entries(uncommittedState.dropdown)) {
@@ -78,20 +79,20 @@ export default function MainContent() {
 	const classes = useStyles();
 
 	const handleChange = (event) => {
-      let list = getOpen();
+      let list = uncommittedState.dropdown[uncommittedState.last_opened];
 	  list.value = event.target.value;
-	  list.open = false;
 	  commitState()
 	};
 
 	const handleClose = (event) => {
-        // let list = getOpen();
-        // list.open = false;
-        // commitState()
+        let list = uncommittedState.dropdown[uncommittedState.last_opened]
+        list.open = false;
+        commitState()
 	};
 
 	const handleOpen = (event) => {
-	  uncommittedState.dropdown[event.target.id]['open'] = true;
+	  uncommittedState.last_opened = event.target.id;
+	  uncommittedState.dropdown[uncommittedState.last_opened]['open'] = true;
 	  commitState()
 	};
 
