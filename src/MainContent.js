@@ -7,6 +7,7 @@ import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 import './MainContent.css';
 import ChartPreview from './ChartPreview'
+import Upload from './Upload'
 
 import PFPPlaceholder from './images/pfp_placeholder.png'
 import PreviewPlaceholder from './images/preview_placeholder.png'
@@ -228,6 +229,7 @@ export default function MainContent() {
 			    </FormControl>
               </Grid>
             </Grid>
+            <Upload />
             <Grid container spacing={3}>
                 { uncommittedState.charts.map( (object, index) =>
                     {
