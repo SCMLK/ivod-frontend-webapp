@@ -34,7 +34,6 @@ import Group from "@material-ui/icons/Group";
 import InfoIcon from '@material-ui/icons/Info';
 import HelpIcon from '@material-ui/icons/Help';
 import NotificationsIcon from '@material-ui/icons/Notifications';
-import AddIcon from '@material-ui/icons/Add';
 
 /* External installed Components*/
 import SearchBar from "material-ui-search-bar";
@@ -45,6 +44,9 @@ import IfisLogo from './images/ifis_white.svg';
 
 /* Selfcreated Components */
 import MainContent from './MainContent';
+import AddChartMenu from './AddChartMenu';
+import AddDashboardMenu from './AddDashboardMenu';
+import AddGroupsMenu from './AddGroupsMenu';
 
 const drawerWidth = 240;
 
@@ -137,7 +139,6 @@ export default function MiniDrawer() {
     console.log("Drawer closed + showAddBtns: " + showAddBtns);
   };
 
-
   return (
     <div className={classes.root} id="drawer">
       <CssBaseline />
@@ -212,7 +213,7 @@ export default function MiniDrawer() {
               <ListItemText primary="Charts"/>
               <ListItemSecAct>
                 <IconButton edge="end" aria-label="add">
-                  {open ? <AddIcon /> : null}
+                  {open ? <AddChartMenu /> : null}
                 </IconButton>
               </ListItemSecAct>
            </ListItem>
@@ -221,7 +222,7 @@ export default function MiniDrawer() {
               <ListItemText primary="Dashboards"/>
               <ListItemSecAct>
                 <IconButton edge="end" aria-label="add">
-                  {open ? <AddIcon /> : null}
+                  {open ? <AddDashboardMenu /> : null}
                 </IconButton>
               </ListItemSecAct>
            </ListItem>
@@ -230,7 +231,7 @@ export default function MiniDrawer() {
               <ListItemText primary="Groups"/>
               <ListItemSecAct>
                 <IconButton edge="end" aria-label="add">
-                  {open ? <AddIcon /> : null}
+                  {open ? <AddGroupsMenu /> : null}
                 </IconButton>
               </ListItemSecAct>
            </ListItem>
