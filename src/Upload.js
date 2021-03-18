@@ -1,11 +1,15 @@
 import React from 'react';
-import {uploadData} from './callWrapper'
+import {getClient } from './callWrapper'
 
 export default function Upload() {
 
     const onChangeHandler = (event) => {
         //Do Upload here
-        uploadData(event.target.files[0], 'HARDCODED_NAME', console.log, console.error);
+        getClient().uploadData(event.target.files[0], 'HARDCODED_NAME', console.log, errorHandler);
+    }
+
+    const errorHandler = (error) => {
+        console.log(error)
     }
 
     return (<form>
