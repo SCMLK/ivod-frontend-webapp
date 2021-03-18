@@ -61,7 +61,7 @@ class Client {
     }
 
     async getDatasource(datasourceID) {
-        const config = {method: "GET", url:`/api/datasource/${datasourceID}`}
+        const config = {method: "GET", url:`/api/datasources/${datasourceID}`}
         if(this.accessToken) {
             config['headers'] = {"Content-Type": "application/json","Authorization":`Bearer ${this.accessToken}`}
         }
@@ -128,7 +128,7 @@ class Client {
         return response.data;
     }
 
-    async charttypes(chartID) {
+    async getChart(chartID) {
         const config = {method: "GET", url:`/api/charts/${chartID}`}
         if(this.accessToken) {
             config['headers'] = {"Content-Type": "application/json","Authorization":`Bearer ${this.accessToken}`}
