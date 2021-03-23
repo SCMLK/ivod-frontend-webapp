@@ -80,7 +80,7 @@ class Client {
 
     async deleteDatasource(datasourceID) {
         await this.assertLogin();
-        const response = await this.client({method: "PATCH", url:`/api/datasources/${datasourceID}`, headers:{"Content-Type": "application/json","Authorization":`Bearer ${this.accessToken}`}})
+        const response = await this.client({method: "DELETE", url:`/api/datasources/${datasourceID}`, headers:{"Content-Type": "application/json","Authorization":`Bearer ${this.accessToken}`}})
         return response.data;
     }
 
@@ -121,7 +121,7 @@ class Client {
 
     async createChart(datasourceID, chartType, chartConfig, name, downloadable=false, visibility=0) {
         await this.assertLogin();
-        const data = {datasource:datasourceID,chart_type:chartType, config:chartConfig, downloadable:downloadable, visibility:visibility}
+        const data = {datasource:datasourceID,chart_type:chartType, config:chartConfig, chart_name:name, downloadable:downloadable, visibility:visibility}
         const config = {method: "POST", url:`/api/charts`, data: data}
         config['headers'] = {"Content-Type": "application/json","Authorization":`Bearer ${this.accessToken}`}
         const response = await this.client(config);
