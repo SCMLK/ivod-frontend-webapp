@@ -14,7 +14,7 @@ import PreviewPlaceholder from './images/preview_placeholder.png'
 
 import axios from 'axios';
 import deepEqual from 'deep-equal'
-
+import {createClient, getClient} from "./callWrapper";
 
 const useStyles = makeStyles((theme) => ({
   button: {
@@ -29,7 +29,7 @@ const useStyles = makeStyles((theme) => ({
 
 export default function MainContent() {
 
-    const [committedState, setstate] =  React.useState({
+    const [committedState, setstate] = React.useState({
         dropdown : {
             'demo-controlled-time-open-select': {
                 open: false,
@@ -56,7 +56,7 @@ export default function MainContent() {
 
     // const getOpen = () => {
     //     //Return the first open dropdown list, or null, if no lists are open
-    //     for (let [name, list] of Object.entries(uncommittedState.dropdown)) {
+    //     for (let [name, list] of Object.entries(committedState.dropdown)) {
     //         if (list.open) {
     //             return list;
     //         }
@@ -97,8 +97,8 @@ export default function MainContent() {
 	  commitState()
 	};
 
-    const updatePreviews = () => {
-        if (valuesChanged()) {
+    const updatePreviews = (force = false) => {
+        if (valuesChanged() || force) {
             // Update the reference value, so valuesChanged returns false next time
             const cloned_state = JSON.parse(JSON.stringify(uncommittedState));
             delete cloned_state.previous;
@@ -128,6 +128,7 @@ export default function MainContent() {
                 case 50:
                     param['chart_type'] = 'bubblechart';
                     break;
+
                 case 60:
                     param['chart_type'] = 'scatterchart';
                     break;
@@ -135,17 +136,20 @@ export default function MainContent() {
                     param['chart_type'] = 'hiveplot';
                     break;
             }
-            axios.get(`https://visquid.org/api/charts`, {params: param})
-                .then(res => {
+
+            const client = getClient();
+            if(client) {
+                client.getCharts().then(charts => {
                     console.log("Checked for charts")
-                    if (!(deepEqual(res.data, uncommittedState.charts))) {
+                    if (!(deepEqual(charts, uncommittedState.charts))) {
 
                         //Only run if local data differed from most recent server response
-                        uncommittedState.charts = res.data;
+                        uncommittedState.charts = charts;
                         console.log("Found changes in charts, updating!")
                         commitState();
                     }
                 });
+            }
         }
     }
 
@@ -156,7 +160,8 @@ export default function MainContent() {
 
     React.useEffect(() => {
         //Run only once on mount
-        
+        const client = createClient('https://visquid.org/');
+        updatePreviews(true);
     }, []);
 
 	return  (<div classs="mainContent">
