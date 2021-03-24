@@ -45,6 +45,8 @@ import IfisLogo from './images/ifis_white.svg';
 
 /* Selfcreated Components */
 import MainContent from './MainContent';
+import Upload from './Upload';
+import {createClient} from "./callWrapper";
 
 const drawerWidth = 240;
 
@@ -137,6 +139,12 @@ export default function MiniDrawer() {
     console.log("Drawer closed + showAddBtns: " + showAddBtns);
   };
 
+
+      React.useEffect(() => {
+        //Run only once on mount
+        const client = createClient('https://visquid.org/');
+        // FIXME: LOGIN HERE FOR DEBUGGING
+    }, []);
 
   return (
     <div className={classes.root} id="drawer">
@@ -250,7 +258,8 @@ export default function MiniDrawer() {
       <div>
         <img class="banner" src={Banner} alt="Page-Banner" />
         <main className={classes.content}>
-          <MainContent />
+          {/*<MainContent />*/}
+          <Upload />
         </main>
       </div>
       <footer>
