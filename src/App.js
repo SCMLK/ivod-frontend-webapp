@@ -42,11 +42,14 @@ import SearchBar from "material-ui-search-bar";
 import Banner from './images/banner.png';
 import IfisLogo from './images/ifis_white.svg';
 
+
 /* Selfcreated Components */
 import MainContent from './MainContent';
 import AddChartMenu from './AddChartMenu';
 import AddDashboardMenu from './AddDashboardMenu';
 import AddGroupsMenu from './AddGroupsMenu';
+import Footer from './components/Footer'
+
 
 const drawerWidth = 240;
 
@@ -254,9 +257,7 @@ export default function MiniDrawer() {
           <MainContent />
         </main>
       </div>
-      <footer>
-        <img class="ifisLogo" src={IfisLogo} alt="Ifis-Logo" />
-      </footer>
+      <Footer/>
     </div>
   );
 }
