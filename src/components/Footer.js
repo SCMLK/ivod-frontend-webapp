@@ -7,8 +7,8 @@ import {
     FooterLink,
     Heading,
     FooterHeading,
-} from "./FooterStyles";
-import IfisLogo from './images/ifis_white.svg';
+} from "./styles/FooterStyles";
+import IfisLogo from '../images/ifis_white.svg';
 
 const Footer = () => {
     return (

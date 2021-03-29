@@ -48,7 +48,7 @@ import MainContent from './MainContent';
 import AddChartMenu from './AddChartMenu';
 import AddDashboardMenu from './AddDashboardMenu';
 import AddGroupsMenu from './AddGroupsMenu';
-import Footer from './Footer'
+import Footer from './components/Footer'
 
 
 const drawerWidth = 240;

@@ -9,7 +9,7 @@ export const FooterHeading = styled.h1`
 `;
 
 export const Box = styled.div`
-  padding: 80px 60px;
+  padding: 10px 60px;
   background: #282c34;
   position: absolute;
   bottom: 0;
