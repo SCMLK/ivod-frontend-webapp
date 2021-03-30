@@ -1,15 +1,16 @@
 import axios from "axios";
 
-var currentClient = [];
+const currentClient = {};
 
 class Client {
-    constructor(baseURL) {
+    constructor(baseURL, name) {
         this.client = axios.create({
             baseURL: baseURL,
             timeout: 5000,
         });
         this.accessToken = null;
         this.refreshToken = null;
+        this.name = name;
     }
 
     login(username, password) {
@@ -20,6 +21,7 @@ class Client {
                 console.log(response)
                 client.accessToken = response.data['access'];
                 client.refreshToken = response.data['refresh'];
+                currentClient[client.name] = client;
                 //TODO: Start thread to auto-refresh
             }).catch(console.error);
     }
@@ -27,6 +29,7 @@ class Client {
     logout() {
         this.accessToken = null;
         this.refreshToken = null;
+        currentClient[this.name] = this;
     }
 
     async createDatasourceFromFile(file, name, onSuccess, onError) {
@@ -153,6 +156,15 @@ class Client {
         return response.data;
     }
 
+    async getChartCodeURL(chartID) {
+        const config = {method: "HEAD", url:`/api/charts/${chartID}/code`,maxRedirects:0}
+        if(this.accessToken) {
+            config['headers'] = {"Content-Type": "application/json","Authorization":`Bearer ${this.accessToken}`}
+        }
+        const response = await this.client(config);
+        return response.request.responseURL
+    }
+
     async getChartCode(chartID) {
         const config = {method: "GET", url:`/api/charts/${chartID}/code`}
         if(this.accessToken) {
@@ -172,7 +184,7 @@ class Client {
     }
 
     async getChartFile(chartID, filename) {
-        const config = {method: "GET", url:`/api/charts/${chartID}/${filename}`}
+        const config = {method: "GET", url:`/api/charts/${chartID}/files/${filename}`}
         if(this.accessToken) {
             config['headers'] = {"Content-Type": "application/json","Authorization":`Bearer ${this.accessToken}`}
         }
@@ -292,6 +304,6 @@ export function getClient(name="default") {
 }
 
 export function createClient(baseURL, name="default") {
-    currentClient[name] = new Client(baseURL);
+    currentClient[name] = new Client(baseURL, name);
     return currentClient[name];
 }
