@@ -11,6 +11,11 @@ class Client {
         this.accessToken = null;
         this.refreshToken = null;
         this.name = name;
+        this.baseURL = baseURL;
+        if(this.baseURL.endsWith('/')) {
+            // remove trailing slash
+            this.baseURL = this.baseURL.substr(0, this.baseURL.length-1);
+        }
     }
 
     login(username, password) {
@@ -174,8 +179,12 @@ class Client {
         return response.data;
     }
 
+    getChartConfigURL(chartID) {
+        return `${this.baseURL}/api/charts/${chartID}/config`
+    }
+
     async getChartConfig(chartID) {
-        const config = {method: "GET", url:`/api/charts/${chartID}/code`}
+        const config = {method: "GET", url:`/api/charts/${chartID}/config`}
         if(this.accessToken) {
             config['headers'] = {"Content-Type": "application/json","Authorization":`Bearer ${this.accessToken}`}
         }
