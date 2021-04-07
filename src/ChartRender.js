@@ -6,7 +6,17 @@ export default function ChartRender(props) {
 
     const [libraryURL, setLibraryURL] = React.useState('');
     const [missingLibraries, setMissingLibraries] = React.useState(null);
+    const [config, setConfig] = React.useState(null);
+    const [waitingInterval, setWaitingInterval] = React.useState(null);
     const [chartObject, setchartObject] = React.useState(null);
+
+    function buildHeader(){
+        const token=getClient().accessToken;
+        if(token){
+            return {headers:{"Authorization": "Bearer "+token}}
+        }
+    }
+
 
     const loadScriptTags = () => {
 
@@ -45,25 +55,28 @@ export default function ChartRender(props) {
             getClient().getChartCodeURL(props.chartID).then((result)=>{setLibraryURL([`${client.baseURL}/api/code/base.js`,result]);});
         } else if(missingLibraries == null) {
             loadScriptTags();
-        } else if(missingLibraries.length > 0){
+        } else if(missingLibraries.length > 0) {
             addScriptTags();
-        } else if(!chartObject) {
-            //Dependencies loaded, render chartObject
-            getClient().getChartFile(props.chartID, 'site.html').then((code) => {
-                const target_div = document.getElementById('chart');
-                const scriptTag = document.createElement('script');
-                function buildHeader(){const token=getClient().accessToken;if(token){return {headers:{"Authorization": "Bearer "+token}}}};
-                const configURL = getClient().getChartConfigURL(props.chartID);
-                window.d3.json(configURL, buildHeader())
-                    .then((config)=>{
-                        console.log(config)
-                        let chart = new window.pive[config.js_name.toLowerCase()][config.version](config, buildHeader());
-                        setchartObject(chart)})
-                //const evaledScript = `function callback(chart){setchartObject(chart)};function buildHeader(){const token="${getClient().accessToken}";if(token){return {headers:{"Authorization": "Bearer "+token}}}};${code}`; //FIXME: There must be a better way
-                // scriptTag.innerHTML = evaledScript;
-                // target_div.appendChild(scriptTag)
-            });
-        } else {
+        } else if(!config) {
+            const configURL = getClient().getChartConfigURL(props.chartID);
+            window.d3.json(configURL, buildHeader())
+                    .then((config) => {
+                        setConfig(config)
+                    });
+        } else if(!chartObject && !waitingInterval) {
+            const interval = setInterval(() => {
+                console.log(chartObject)
+                if(!(window.pive == undefined || window.pive[config.js_name.toLowerCase()] == undefined)) {
+                    //FIXME: Will never be executed if wrong library is loaded, can this be exploited for DoS?
+                    //Dependencies loaded, render chartObject
+                    clearInterval(interval)
+                    let chart = new window.pive[config.js_name.toLowerCase()][config.version](config, buildHeader());
+                    setchartObject(chart);
+                    setWaitingInterval(null)
+                }
+            },500)
+            setWaitingInterval(interval);
+        } else if(chartObject){
             console.log("drawing chart")
             chartObject.render();
         }
