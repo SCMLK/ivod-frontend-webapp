@@ -171,39 +171,6 @@ export default function MiniDrawer() {
           [classes.appBarShift]: open,
         })}
       >
-          <Toolbar>
-            <SearchBar
-              className="SearchBar"
-              value={null}
-              onChange={(newValue) => this.setState({ value: newValue })}
-              onRequestSearch={() => doSomethingWith(this.state.value)}
-            />
-            <NotificationsIcon
-              className="HeaderNotification"
-            />
-            <Button
-              id="HeaderLoginBtn"
-              variant="contained"
-              color="default"
-              className={classes.button}
-              endIcon={<AccountCircle>login/signup</AccountCircle>}
-              onClick={() => {setloginModalOpen(true);} }
-            >
-              login/signup
-            </Button>
-              <Modal
-                open={loginModalOpen}
-                onClose={ () => {setloginModalOpen(false)}}
-                aria-labelledby="simple-modal-title"
-                aria-describedby="simple-modal-description"
-              >
-                <div style={{top:'30%', left:'30%',}} className={classes.paper}>
-                    <Login onSuccess={() => {setloginModalOpen(false);}} />
-                </div>
-              </Modal>
-
-        </Toolbar>
-      <AppBar />
         <Toolbar>
           <IconButton
             color="inherit"
@@ -219,6 +186,36 @@ export default function MiniDrawer() {
           <Typography variant="h6" noWrap>
             IVOD - Interactive Visualization of Open Data
           </Typography>
+        <SearchBar
+          className="SearchBar"
+          value={null}
+          onChange={(newValue) => this.setState({ value: newValue })}
+          onRequestSearch={() => doSomethingWith(this.state.value)}
+        />
+        <NotificationsIcon
+          className="HeaderNotification"
+        />
+        <Button
+          id="HeaderLoginBtn"
+          variant="contained"
+          color="default"
+          className={classes.button}
+          endIcon={<AccountCircle>login/signup</AccountCircle>}
+          onClick={() => {setloginModalOpen(true);} }
+        >
+          login/signup
+        </Button>
+          <Modal
+            open={loginModalOpen}
+            onClose={ () => {setloginModalOpen(false)}}
+            aria-labelledby="simple-modal-title"
+            aria-describedby="simple-modal-description"
+          >
+            <div style={{top:'30%', left:'30%',}} className={classes.paper}>
+                <Login onSuccess={() => {setloginModalOpen(false);}} />
+            </div>
+          </Modal>
+
         </Toolbar>
       </AppBar>
       <Drawer
