@@ -22,6 +22,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Button from '@material-ui/core/Button';
 import ListItemSecAct from '@material-ui/core/ListItemSecondaryAction';
+import Modal from '@material-ui/core/Modal';
+import DialogContent from '@material-ui/core/DialogContent';
 
 /* Material UI Icons */
 import MenuIcon from '@material-ui/icons/Menu';
@@ -34,6 +36,7 @@ import Group from "@material-ui/icons/Group";
 import InfoIcon from '@material-ui/icons/Info';
 import HelpIcon from '@material-ui/icons/Help';
 import NotificationsIcon from '@material-ui/icons/Notifications';
+import AddIcon from '@material-ui/icons/Add';
 
 /* External installed Components*/
 import SearchBar from "material-ui-search-bar";
@@ -50,6 +53,8 @@ import AddDashboardMenu from './AddDashboardMenu';
 import AddGroupsMenu from './AddGroupsMenu';
 import Footer from './components/Footer'
 
+import {createClient} from "./callWrapper";
+import Login from "./Login";
 
 const drawerWidth = 240;
 
@@ -116,11 +121,19 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     padding: theme.spacing(3),
   },
+  paper: {
+    position: 'absolute',
+    width: 400,
+    backgroundColor: theme.palette.background.paper,
+    border: '2px solid #000',
+    boxShadow: theme.shadows[5],
+    padding: theme.spacing(2, 4, 3),
+  },
 }));
 
 
 function doSomethingWith(value) {
-  return null; 
+  return null;
 }
 
 
@@ -128,6 +141,7 @@ export default function MiniDrawer() {
   const classes = useStyles();
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const [loginModalOpen, setloginModalOpen] = React.useState(false);
   let showAddBtns = false;
 
   const handleDrawerOpen = () => {
@@ -142,6 +156,12 @@ export default function MiniDrawer() {
     console.log("Drawer closed + showAddBtns: " + showAddBtns);
   };
 
+      React.useEffect(() => {
+        //Run only once on mount
+        const client = createClient('https://visquid.org/');
+        // FIXME: LOGIN HERE FOR DEBUGGING
+    }, []);
+
   return (
     <div className={classes.root} id="drawer">
       <CssBaseline />
@@ -151,24 +171,38 @@ export default function MiniDrawer() {
           [classes.appBarShift]: open,
         })}
       >
-        <SearchBar
-          className="SearchBar"
-          value={null}
-          onChange={(newValue) => this.setState({ value: newValue })}
-          onRequestSearch={() => doSomethingWith(this.state.value)}
-        />
-        <NotificationsIcon
-          className="HeaderNotification"
-        />
-        <Button
-          id="HeaderLoginBtn"
-          variant="contained"
-          color="default"
-          className={classes.button}
-          endIcon={<AccountCircle>login/signup</AccountCircle>}
-        >
-          login/signup
-        </Button>
+          <Toolbar>
+            <SearchBar
+              className="SearchBar"
+              value={null}
+              onChange={(newValue) => this.setState({ value: newValue })}
+              onRequestSearch={() => doSomethingWith(this.state.value)}
+            />
+            <NotificationsIcon
+              className="HeaderNotification"
+            />
+            <Button
+              id="HeaderLoginBtn"
+              variant="contained"
+              color="default"
+              className={classes.button}
+              endIcon={<AccountCircle>login/signup</AccountCircle>}
+              onClick={() => {setloginModalOpen(true);} }
+            >
+              login/signup
+            </Button>
+              <Modal
+                open={loginModalOpen}
+                onClose={ () => {setloginModalOpen(false)}}
+                aria-labelledby="simple-modal-title"
+                aria-describedby="simple-modal-description"
+              >
+                <div style={{top:'30%', left:'30%',}} className={classes.paper}>
+                    <Login onSuccess={() => {setloginModalOpen(false);}} />
+                </div>
+              </Modal>
+
+        </Toolbar>
       <AppBar />
         <Toolbar>
           <IconButton
@@ -216,7 +250,7 @@ export default function MiniDrawer() {
               <ListItemText primary="Charts"/>
               <ListItemSecAct>
                 <IconButton edge="end" aria-label="add">
-                  {open ? <AddChartMenu /> : null}
+                  {open ? <AddIcon /> : null}
                 </IconButton>
               </ListItemSecAct>
            </ListItem>
@@ -225,7 +259,7 @@ export default function MiniDrawer() {
               <ListItemText primary="Dashboards"/>
               <ListItemSecAct>
                 <IconButton edge="end" aria-label="add">
-                  {open ? <AddDashboardMenu /> : null}
+                  {open ? <AddIcon /> : null}
                 </IconButton>
               </ListItemSecAct>
            </ListItem>
@@ -234,7 +268,7 @@ export default function MiniDrawer() {
               <ListItemText primary="Groups"/>
               <ListItemSecAct>
                 <IconButton edge="end" aria-label="add">
-                  {open ? <AddGroupsMenu /> : null}
+                  {open ? <AddIcon /> : null}
                 </IconButton>
               </ListItemSecAct>
            </ListItem>
